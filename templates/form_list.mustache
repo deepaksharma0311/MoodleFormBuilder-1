@@ -1,0 +1,212 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+}}
+<div class="local-formbuilder-list">
+    <div class="page-header">
+        <h2>{{#str}}manageforms, local_formbuilder{{/str}}</h2>
+        {{#cancreate}}
+        <a href="{{createurl}}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> {{#str}}createform, local_formbuilder{{/str}}
+        </a>
+        {{/cancreate}}
+    </div>
+
+    {{#forms}}
+    <div class="forms-grid">
+        {{#forms}}
+        <div class="form-card">
+            <div class="form-card-header">
+                <h4>{{name}}</h4>
+                <div class="form-actions">
+                    <a href="{{editurl}}" class="btn btn-sm btn-outline-primary" title="Edit">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <a href="{{viewurl}}" class="btn btn-sm btn-outline-info" title="View">
+                        <i class="fa fa-eye"></i>
+                    </a>
+                    <a href="{{submissionsurl}}" class="btn btn-sm btn-outline-success" title="Submissions">
+                        <i class="fa fa-inbox"></i>
+                    </a>
+                    {{#canmanage}}
+                    <a href="{{deleteurl}}" class="btn btn-sm btn-outline-danger" title="Delete" 
+                       onclick="return confirm('{{#str}}confirmdelete, local_formbuilder{{/str}}')">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                    {{/canmanage}}
+                </div>
+            </div>
+            <div class="form-card-body">
+                {{#description}}
+                <p class="form-description">{{description}}</p>
+                {{/description}}
+                <div class="form-meta">
+                    <small class="text-muted">
+                        Created: {{timecreated}}<br>
+                        Modified: {{timemodified}}
+                    </small>
+                </div>
+            </div>
+            <div class="form-card-footer">
+                <span class="badge {{#active}}badge-success{{/active}}{{^active}}badge-secondary{{/active}}">
+                    {{#active}}Active{{/active}}{{^active}}Inactive{{/active}}
+                </span>
+            </div>
+        </div>
+        {{/forms}}
+    </div>
+    {{/forms}}
+
+    {{^forms}}
+    <div class="empty-state">
+        <div class="empty-state-content">
+            <i class="fa fa-clipboard-list fa-3x text-muted"></i>
+            <h3>{{#str}}noforms, local_formbuilder{{/str}}</h3>
+            {{#cancreate}}
+            <p>Get started by creating your first form.</p>
+            <a href="{{createurl}}" class="btn btn-primary btn-lg">
+                <i class="fa fa-plus"></i> {{#str}}createform, local_formbuilder{{/str}}
+            </a>
+            {{/cancreate}}
+        </div>
+    </div>
+    {{/forms}}
+</div>
+
+<style>
+.local-formbuilder-list {
+    padding: 20px;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.page-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.form-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.form-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.form-card-header {
+    padding: 20px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.form-card-header h4 {
+    margin: 0;
+    color: #333;
+    flex: 1;
+    margin-right: 15px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.form-card-body {
+    padding: 15px 20px;
+}
+
+.form-description {
+    color: #6c757d;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.form-meta {
+    margin-top: 15px;
+}
+
+.form-card-footer {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    border-radius: 0 0 8px 8px;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.empty-state-content h3 {
+    margin: 20px 0 15px;
+    color: #6c757d;
+}
+
+.empty-state-content p {
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .forms-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-card-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .form-actions {
+        justify-content: flex-end;
+    }
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
