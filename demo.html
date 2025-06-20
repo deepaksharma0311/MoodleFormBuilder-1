@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodle Form Builder - Advanced Features Demo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            padding: 2rem 0;
+        }
+        .demo-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+        .demo-header h1 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+        .demo-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .form-builder-demo {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .field-palette {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .field-type {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            background: #e9ecef;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .field-type:hover {
+            background: #007bff;
+            color: white;
+            transform: scale(1.05);
+        }
+        .demo-form {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .grid-demo table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .grid-demo th {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            font-weight: 500;
+        }
+        .grid-demo td {
+            padding: 0.5rem;
+            border: 1px solid #dee2e6;
+        }
+        .grid-demo input {
+            width: 100%;
+            border: none;
+            padding: 0.5rem;
+            background: transparent;
+        }
+        .calculation-demo {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .multipage-progress {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            height: 100%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+        .mobile-demo {
+            max-width: 375px;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 2rem 1rem;
+            border: 8px solid #333;
+            position: relative;
+        }
+        .mobile-demo::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+        }
+        .notification-demo {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        .feature-list i {
+            color: #28a745;
+            margin-right: 0.5rem;
+        }
+        .video-demo {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .video-placeholder {
+            background: #343a40;
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-header">
+            <h1><i class="fas fa-tools"></i> Moodle Form Builder</h1>
+            <p>Advanced Form Creation Plugin with Drag & Drop Interface</p>
+            <div class="badge bg-success fs-6">All 14 LMS Requirements Implemented</div>
+        </div>
+
+        <div class="row">
+            <!-- Feature A: Code-free Form Creation -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>A. Code-Free Form Creation</h3>
+                    <p>Create professional forms without writing a single line of code.</p>
+                    <div class="form-builder-demo">
+                        <div class="field-palette">
+                            <h6>Available Fields:</h6>
+                            <div class="field-type"><i class="fas fa-font"></i> Text</div>
+                            <div class="field-type"><i class="fas fa-align-left"></i> Textarea</div>
+                            <div class="field-type"><i class="fas fa-caret-down"></i> Dropdown</div>
+                            <div class="field-type"><i class="fas fa-check-square"></i> Checkbox</div>
+                            <div class="field-type"><i class="fas fa-upload"></i> File Upload</div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Simply drag fields to create your form!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature B: Drag & Drop Interface -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                    <h3>B. Drag & Drop Interface</h3>
+                    <p>Intuitive point-and-click interface with drag-and-drop field reordering.</p>
+                    <div class="form-builder-demo">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-grip-vertical text-muted me-2"></i>
+                            <div class="flex-grow-1 border p-2 rounded">Name Field</div>
+                            <i class="fas fa-times text-danger ms-2"></i>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fas fa-grip-vertical text-muted me-2"></i>
+                            <div class="flex-grow-1 border p-2 rounded">Email Field</div>
+                            <i class="fas fa-times text-danger ms-2"></i>
+                        </div>
+                        <div class="text-center text-muted">
+                            <i class="fas fa-plus-circle"></i> Drop new fields here
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature C: Multiple HTML Input Types -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>C. Multiple HTML Input Types</h3>
+                    <p>Support for all major HTML input types and custom fields.</p>
+                    <div class="demo-form">
+                        <div class="mb-3">
+                            <label class="form-label">Single-line Text</label>
+                            <input type="text" class="form-control" placeholder="Enter text">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Multi-line Text</label>
+                            <textarea class="form-control" rows="3" placeholder="Enter description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Dropdown</label>
+                            <select class="form-control">
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                                <label class="form-check-label">Checkbox Option</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">File Upload</label>
+                            <input type="file" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature D: Help Text & Placeholders -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                    <h3>D. Help Text & Placeholders</h3>
+                    <p>Add user-defined help text and placeholder text to guide users.</p>
+                    <div class="demo-form">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Email Address 
+                                <i class="fas fa-info-circle text-info" title="We'll never share your email"></i>
+                            </label>
+                            <input type="email" class="form-control" placeholder="name@example.com">
+                            <div class="form-text">We'll never share your email with anyone else.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Phone Number
+                                <i class="fas fa-info-circle text-info" title="Include country code"></i>
+                            </label>
+                            <input type="tel" class="form-control" placeholder="+1 (555) 123-4567">
+                            <div class="form-text">Please include your country code.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature E: Presentational Elements -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3>E. Presentational Elements</h3>
+                    <p>Add headings, paragraphs, images, and videos to enhance your forms.</p>
+                    <div class="demo-form">
+                        <h2>Survey Information</h2>
+                        <p class="text-muted">Please take a moment to complete this important survey. Your feedback helps us improve our services.</p>
+                        <div class="text-center my-4">
+                            <img src="https://via.placeholder.com/300x150/007bff/ffffff?text=Sample+Image" class="img-fluid rounded" alt="Sample">
+                        </div>
+                        <div class="video-demo">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play-circle fa-3x mb-2"></i>
+                                <div>Video Content</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature F: Grid/Table Fields -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-table"></i>
+                    </div>
+                    <h3>F. Grid/Table Fields</h3>
+                    <p>Create grid-style fields for tabular data input with organized submission views.</p>
+                    <div class="demo-form">
+                        <label class="form-label">Monthly Expenses</label>
+                        <div class="grid-demo">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Amount</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" placeholder="Food"></td>
+                                        <td><input type="number" placeholder="$500"></td>
+                                        <td><input type="text" placeholder="Groceries"></td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="text" placeholder="Transport"></td>
+                                        <td><input type="number" placeholder="$200"></td>
+                                        <td><input type="text" placeholder="Gas & parking"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature G: Arithmetic Calculations -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>G. Arithmetic Calculations</h3>
+                    <p>Perform real-time calculations with auto-update functionality.</p>
+                    <div class="demo-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" value="5" id="quantity">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Unit Price</label>
+                                <input type="number" class="form-control" value="10.50" id="price">
+                            </div>
+                        </div>
+                        <div class="calculation-demo">
+                            <strong>Total: $<span id="total">52.50</span></strong>
+                            <div class="small text-muted">Auto-calculated: Quantity × Unit Price</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature H: Multi-page Forms -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-copy"></i>
+                    </div>
+                    <h3>H. Multi-page Forms</h3>
+                    <p>Create multi-page forms with option to limit one field per page.</p>
+                    <div class="demo-form">
+                        <div class="multipage-progress">
+                            <div class="progress-bar" style="width: 66%"></div>
+                        </div>
+                        <div class="text-center mb-3">
+                            <small class="text-muted">Page 2 of 3</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">What is your experience level?</label>
+                            <select class="form-control">
+                                <option>Beginner</option>
+                                <option>Intermediate</option>
+                                <option>Advanced</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-secondary">Previous</button>
+                            <button class="btn btn-primary">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature I: Custom Redirects -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-external-link-alt"></i>
+                    </div>
+                    <h3>I. Custom Redirects</h3>
+                    <p>Redirect users to custom pages upon successful form submission.</p>
+                    <div class="demo-form">
+                        <div class="notification-demo">
+                            <i class="fas fa-check-circle"></i> Form submitted successfully!
+                            <div class="small mt-1">Redirecting to thank you page in 3 seconds...</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            <span>Redirecting to: https://example.com/thank-you</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature J: Mobile Support -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>J. Mobile & Tablet Support</h3>
+                    <p>Fully responsive design optimized for mobile and tablet devices.</p>
+                    <div class="mobile-demo">
+                        <div class="mb-3">
+                            <label class="form-label small">Name</label>
+                            <input type="text" class="form-control form-control-sm">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Email</label>
+                            <input type="email" class="form-control form-control-sm">
+                        </div>
+                        <button class="btn btn-primary btn-sm w-100">Submit</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features K, L, M: Email Notifications -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>K, L, M. Email Notifications</h3>
+                    <p>Automated email notifications for form creators, submitters, and additional parties.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Owner notification of new submissions</li>
+                        <li><i class="fas fa-check"></i> Confirmation emails to submitters</li>
+                        <li><i class="fas fa-check"></i> Custom email notifications to specified parties</li>
+                        <li><i class="fas fa-check"></i> Customizable email templates</li>
+                    </ul>
+                    <div class="notification-demo">
+                        <strong>Sample Email:</strong><br>
+                        <small>New form submission received for "Customer Survey"<br>
+                        Submitted by: john.doe@example.com<br>
+                        View submissions: <a href="#">Click here</a></small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature N: Custom Messages -->
+            <div class="col-lg-6 mb-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    <h3>N. Custom Success Messages</h3>
+                    <p>Display personalized post-submission messages to users.</p>
+                    <div class="demo-form">
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> Thank You!</h5>
+                            <p class="mb-0">Your application has been submitted successfully. We will review your information and contact you within 2-3 business days.</p>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong>What's Next?</strong><br>
+                            1. Check your email for confirmation<br>
+                            2. Prepare required documents<br>
+                            3. Wait for our response
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Implementation Details -->
+        <div class="feature-card">
+            <h3><i class="fas fa-cogs"></i> Technical Implementation</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Core Components:</h5>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Moodle Plugin Architecture</li>
+                        <li><i class="fas fa-check"></i> Database Schema (Forms & Submissions)</li>
+                        <li><i class="fas fa-check"></i> JavaScript Drag & Drop Interface</li>
+                        <li><i class="fas fa-check"></i> PHP Form Processing Engine</li>
+                        <li><i class="fas fa-check"></i> JSON-based Field Configuration</li>
+                        <li><i class="fas fa-check"></i> Responsive CSS Framework</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5>Security & Privacy:</h5>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Capability-based Access Control</li>
+                        <li><i class="fas fa-check"></i> GDPR Privacy Compliance</li>
+                        <li><i class="fas fa-check"></i> SQL Injection Protection</li>
+                        <li><i class="fas fa-check"></i> CSRF Token Validation</li>
+                        <li><i class="fas fa-check"></i> File Upload Security</li>
+                        <li><i class="fas fa-check"></i> Data Export/Deletion Tools</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Installation Instructions -->
+        <div class="feature-card">
+            <h3><i class="fas fa-download"></i> Installation & Usage</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Installation Steps:</h5>
+                    <ol>
+                        <li>Upload plugin to /local/formbuilder/</li>
+                        <li>Visit Site Administration → Notifications</li>
+                        <li>Complete plugin installation</li>
+                        <li>Configure capabilities as needed</li>
+                        <li>Start creating forms!</li>
+                    </ol>
+                </div>
+                <div class="col-md-6">
+                    <h5>Requirements Met:</h5>
+                    <div class="badge bg-success me-1 mb-1">A. Code-free Creation</div>
+                    <div class="badge bg-success me-1 mb-1">B. Drag & Drop</div>
+                    <div class="badge bg-success me-1 mb-1">C. HTML Inputs</div>
+                    <div class="badge bg-success me-1 mb-1">D. Help Text</div>
+                    <div class="badge bg-success me-1 mb-1">E. Media Elements</div>
+                    <div class="badge bg-success me-1 mb-1">F. Grid Fields</div>
+                    <div class="badge bg-success me-1 mb-1">G. Calculations</div>
+                    <div class="badge bg-success me-1 mb-1">H. Multi-page</div>
+                    <div class="badge bg-success me-1 mb-1">I. Redirects</div>
+                    <div class="badge bg-success me-1 mb-1">J. Mobile Support</div>
+                    <div class="badge bg-success me-1 mb-1">K. Owner Emails</div>
+                    <div class="badge bg-success me-1 mb-1">L. User Emails</div>
+                    <div class="badge bg-success me-1 mb-1">M. Party Emails</div>
+                    <div class="badge bg-success me-1 mb-1">N. Custom Messages</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Demo calculation functionality
+        document.getElementById('quantity').addEventListener('input', updateTotal);
+        document.getElementById('price').addEventListener('input', updateTotal);
+
+        function updateTotal() {
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const total = (quantity * price).toFixed(2);
+            document.getElementById('total').textContent = total;
+        }
+
+        // Animate progress bar on scroll
+        window.addEventListener('scroll', function() {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const rect = bar.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    bar.style.width = bar.style.width || '66%';
+                }
+            });
+        });
+
+        // Add hover effects to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
