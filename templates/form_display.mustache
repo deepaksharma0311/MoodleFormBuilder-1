@@ -79,6 +79,133 @@
     color: #dc3545;
 }
 
+/* Grid field styles */
+.grid-field {
+    margin: 20px 0;
+}
+
+.grid-field table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.grid-field th {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    font-weight: 500;
+    text-align: left;
+}
+
+.grid-field td {
+    padding: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.grid-field input {
+    width: 100%;
+    border: none;
+    padding: 8px;
+    background: transparent;
+}
+
+.grid-field input:focus {
+    background: #fff;
+    border: 1px solid #007bff;
+    border-radius: 3px;
+}
+
+/* Calculation field styles */
+.calculation-field {
+    background-color: #f8f9fa !important;
+    color: #495057;
+    font-weight: 500;
+    cursor: not-allowed;
+}
+
+/* Media field styles */
+.image-field,
+.video-field {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.image-field img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.video-field video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Page break styles */
+.page-break {
+    text-align: center;
+    margin: 40px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+}
+
+/* Multi-page form styles */
+.multipage-progress {
+    margin: 20px 0;
+}
+
+.progress {
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.progress-bar {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    height: 100%;
+    transition: width 0.6s ease;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.2) 25%, rgba(255,255,255,0.2) 50%, transparent 50%, transparent 75%, rgba(255,255,255,0.2) 75%);
+    background-size: 20px 20px;
+    animation: progress-stripes 1s linear infinite;
+}
+
+@keyframes progress-stripes {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 0; }
+}
+
+.multipage-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 30px 0;
+    padding: 20px 0;
+    border-top: 2px solid #e9ecef;
+}
+
+.multipage-navigation .btn {
+    min-width: 120px;
+    font-weight: 500;
+}
+
 @media (max-width: 768px) {
     .local-formbuilder-display {
         padding: 10px;
@@ -86,6 +213,30 @@
     
     .form-container {
         padding: 20px;
+    }
+    
+    .grid-field table {
+        font-size: 14px;
+    }
+    
+    .grid-field th,
+    .grid-field td {
+        padding: 6px 4px;
+    }
+    
+    .multipage-navigation {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .multipage-navigation .btn {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .image-field img,
+    .video-field video {
+        max-width: 100%;
     }
 }
 </style>

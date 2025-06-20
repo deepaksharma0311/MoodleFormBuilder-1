@@ -30,6 +30,23 @@ class form_builder extends \moodleform {
         $mform->addElement('hidden', 'settings', '');
         $mform->setType('settings', PARAM_RAW);
 
+        // Multi-page form option
+        $mform->addElement('checkbox', 'multipages', get_string('multipageform', 'local_formbuilder'));
+        $mform->addHelpButton('multipages', 'multipageform', 'local_formbuilder');
+
+        // Email notifications settings
+        $mform->addElement('header', 'emailsettings', get_string('emailnotifications', 'local_formbuilder'));
+        $mform->addElement('checkbox', 'notifyowner', get_string('notifyowner', 'local_formbuilder'));
+        $mform->addElement('checkbox', 'notifysubmitter', get_string('notifysubmitter', 'local_formbuilder'));
+        
+        // Redirect URL
+        $mform->addElement('text', 'redirecturl', get_string('redirecturl', 'local_formbuilder'), 'maxlength="255" size="50"');
+        $mform->setType('redirecturl', PARAM_URL);
+        
+        // Custom message
+        $mform->addElement('textarea', 'custommessage', get_string('custommessage', 'local_formbuilder'), 'wrap="virtual" rows="3" cols="50"');
+        $mform->setType('custommessage', PARAM_TEXT);
+
         // Hidden field for form ID (if editing)
         if (isset($data['id'])) {
             $mform->addElement('hidden', 'id', $data['id']);
@@ -73,6 +90,21 @@ class form_builder extends \moodleform {
                             </div>
                             <div class="field-type" data-type="paragraph">
                                 <i class="fa fa-paragraph"></i> Paragraph
+                            </div>
+                            <div class="field-type" data-type="grid">
+                                <i class="fa fa-table"></i> Grid/Table
+                            </div>
+                            <div class="field-type" data-type="calculation">
+                                <i class="fa fa-calculator"></i> Calculation
+                            </div>
+                            <div class="field-type" data-type="image">
+                                <i class="fa fa-image"></i> Image
+                            </div>
+                            <div class="field-type" data-type="video">
+                                <i class="fa fa-video"></i> Video
+                            </div>
+                            <div class="field-type" data-type="pagebreak">
+                                <i class="fa fa-cut"></i> Page Break
                             </div>
                         </div>
                     </div>

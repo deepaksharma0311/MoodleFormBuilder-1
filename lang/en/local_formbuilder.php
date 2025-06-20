@@ -38,6 +38,11 @@ $string['number'] = 'Number';
 $string['date'] = 'Date';
 $string['heading'] = 'Heading';
 $string['paragraph'] = 'Paragraph';
+$string['grid'] = 'Grid/Table';
+$string['calculation'] = 'Calculation';
+$string['image'] = 'Image';
+$string['video'] = 'Video';
+$string['pagebreak'] = 'Page Break';
 
 // Form management
 $string['manageforms'] = 'Manage Forms';
@@ -63,6 +68,24 @@ $string['notifyowner'] = 'Notify form owner of new submissions';
 $string['notifysubmitter'] = 'Send confirmation email to submitter';
 $string['redirecturl'] = 'Redirect URL after submission';
 $string['custommessage'] = 'Custom success message';
+$string['multipageform'] = 'Multi-page form';
+$string['onefieldperpage'] = 'One field per page';
+$string['calculations'] = 'Calculations';
+$string['formula'] = 'Formula';
+$string['gridcolumns'] = 'Grid columns';
+$string['gridrows'] = 'Grid rows';
+$string['tabularview'] = 'Tabular view';
+$string['mobilefriendly'] = 'Mobile friendly';
+$string['mediaurl'] = 'Media URL';
+$string['alttext'] = 'Alt text';
+$string['autosubtotals'] = 'Auto-calculate subtotals';
+$string['previouspage'] = 'Previous';
+$string['nextpage'] = 'Next';
+$string['page'] = 'Page';
+$string['of'] = 'of';
+$string['emailparties'] = 'Email additional parties';
+$string['partiesfield'] = 'Email addresses field';
+$string['partiesmessage'] = 'Message to parties';
 
 // Privacy
 $string['privacy:metadata:local_formbuilder_forms'] = 'Information about forms created by users.';

@@ -116,6 +116,53 @@ class form_submission extends \moodleform {
             case 'paragraph':
                 $mform->addElement('html', '<p>' . format_text($label) . '</p>');
                 break;
+
+            case 'grid':
+                $columns = isset($field['columns']) ? $field['columns'] : ['Column 1', 'Column 2'];
+                $rows = isset($field['rows']) ? intval($field['rows']) : 3;
+                $gridhtml = '<div class="grid-field"><label>' . $label . '</label>';
+                $gridhtml .= '<table class="table table-bordered">';
+                $gridhtml .= '<thead><tr>';
+                foreach ($columns as $col) {
+                    $gridhtml .= '<th>' . format_text($col) . '</th>';
+                }
+                $gridhtml .= '</tr></thead><tbody>';
+                for ($i = 0; $i < $rows; $i++) {
+                    $gridhtml .= '<tr>';
+                    foreach ($columns as $j => $col) {
+                        $gridhtml .= '<td><input type="text" name="' . $name . '[' . $i . '][' . $j . ']" class="form-control"></td>';
+                    }
+                    $gridhtml .= '</tr>';
+                }
+                $gridhtml .= '</tbody></table></div>';
+                $mform->addElement('html', $gridhtml);
+                break;
+
+            case 'calculation':
+                $formula = isset($field['formula']) ? $field['formula'] : '';
+                $attributes = array('readonly' => 'readonly', 'data-formula' => $formula, 'class' => 'calculation-field');
+                $mform->addElement('text', $name, $label, $attributes);
+                $mform->setType($name, PARAM_FLOAT);
+                break;
+
+            case 'image':
+                $mediaurl = isset($field['mediaurl']) ? $field['mediaurl'] : 'https://via.placeholder.com/300x200';
+                $alttext = isset($field['alttext']) ? $field['alttext'] : 'Image';
+                $mform->addElement('html', '<div class="image-field"><label>' . format_text($label) . '</label><br><img src="' . $mediaurl . '" alt="' . $alttext . '" class="img-responsive" style="max-width: 100%; height: auto;"></div>');
+                break;
+
+            case 'video':
+                $mediaurl = isset($field['mediaurl']) ? $field['mediaurl'] : '';
+                if (!empty($mediaurl)) {
+                    $mform->addElement('html', '<div class="video-field"><label>' . format_text($label) . '</label><br><video width="100%" height="auto" controls><source src="' . $mediaurl . '" type="video/mp4">Your browser does not support the video tag.</video></div>');
+                } else {
+                    $mform->addElement('html', '<div class="video-field"><label>' . format_text($label) . '</label><br><p>Video URL not specified</p></div>');
+                }
+                break;
+
+            case 'pagebreak':
+                $mform->addElement('html', '<div class="page-break" data-page-break="true"><hr><h4 class="text-center">Page Break</h4><hr></div>');
+                break;
         }
 
         // Add help text if provided

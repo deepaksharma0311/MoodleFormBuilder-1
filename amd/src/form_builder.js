@@ -133,6 +133,16 @@ define(['jquery', 'jqueryui'], function($) {
                     return '<h3 contenteditable="true">Heading Text</h3>';
                 case 'paragraph':
                     return '<p contenteditable="true">Paragraph text goes here.</p>';
+                case 'grid':
+                    return '<label>Grid/Table</label><table class="table table-bordered"><thead><tr><th>Column 1</th><th>Column 2</th></tr></thead><tbody><tr><td><input type="text" class="form-control" disabled></td><td><input type="text" class="form-control" disabled></td></tr></tbody></table>';
+                case 'calculation':
+                    return '<label>Calculation Field</label><input type="number" class="form-control calculation-field" placeholder="Calculated value" readonly>';
+                case 'image':
+                    return '<div class="media-field"><label>Image</label><img src="https://via.placeholder.com/300x200?text=Image+Preview" class="img-fluid" alt="Image preview"></div>';
+                case 'video':
+                    return '<div class="media-field"><label>Video</label><video width="300" height="200" controls><source src="" type="video/mp4">Your browser does not support the video tag.</video></div>';
+                case 'pagebreak':
+                    return '<div class="page-break"><hr><span class="page-break-label">Page Break</span><hr></div>';
                 default:
                     return '<label>Unknown Field</label><input type="text" class="form-control" disabled>';
             }
@@ -170,7 +180,7 @@ define(['jquery', 'jqueryui'], function($) {
                 '<input type="text" id="field-label" class="form-control" value="' + label + '">' +
                 '</div>';
 
-            if (!['heading', 'paragraph'].includes(fieldType)) {
+            if (!['heading', 'paragraph', 'pagebreak', 'image', 'video'].includes(fieldType)) {
                 html += '<div class="form-group">' +
                     '<label><input type="checkbox" id="field-required" ' + required + '> Required</label>' +
                     '</div>';
@@ -191,6 +201,40 @@ define(['jquery', 'jqueryui'], function($) {
                     '<label>Options (one per line)</label>' +
                     '<textarea id="field-options" class="form-control" rows="3">Option 1\nOption 2\nOption 3</textarea>' +
                     '</div>';
+            }
+
+            if (fieldType === 'grid') {
+                html += '<div class="form-group">' +
+                    '<label>Grid Columns (one per line)</label>' +
+                    '<textarea id="grid-columns" class="form-control" rows="3">Column 1\nColumn 2\nColumn 3</textarea>' +
+                    '</div>';
+                html += '<div class="form-group">' +
+                    '<label>Number of Rows</label>' +
+                    '<input type="number" id="grid-rows" class="form-control" value="3" min="1" max="20">' +
+                    '</div>';
+            }
+
+            if (fieldType === 'calculation') {
+                html += '<div class="form-group">' +
+                    '<label>Calculation Formula</label>' +
+                    '<input type="text" id="calculation-formula" class="form-control" placeholder="e.g., field_1 + field_2">' +
+                    '</div>';
+                html += '<div class="form-group">' +
+                    '<label><input type="checkbox" id="auto-update" checked> Auto-update calculation</label>' +
+                    '</div>';
+            }
+
+            if (['image', 'video'].includes(fieldType)) {
+                html += '<div class="form-group">' +
+                    '<label>Media URL</label>' +
+                    '<input type="url" id="media-url" class="form-control" placeholder="https://example.com/media">' +
+                    '</div>';
+                if (fieldType === 'image') {
+                    html += '<div class="form-group">' +
+                        '<label>Alt Text</label>' +
+                        '<input type="text" id="alt-text" class="form-control" placeholder="Description for accessibility">' +
+                        '</div>';
+                }
             }
 
             return html;
