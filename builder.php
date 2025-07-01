@@ -236,13 +236,17 @@ if ($id) {
         // Click handler for field types
         $(".field-type").click(function() {
             var fieldType = $(this).data("type");
+            console.log("Field type clicked:", fieldType);
             addFieldToCanvas(fieldType);
         });
         
         function addFieldToCanvas(fieldType) {
+            console.log("Adding field to canvas:", fieldType);
             var field = createFieldElement(fieldType);
+            console.log("Created field element:", field);
             $("#form-fields .drop-zone").remove();
             $("#form-fields").append(field);
+            console.log("Field added to canvas");
             selectField(field);
             updateFormData();
         }
