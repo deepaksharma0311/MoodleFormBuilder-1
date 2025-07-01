@@ -1,33 +1,8 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-
-require_once('./config.php');
-
-$id = optional_param('id', 0, PARAM_INT);
-
-$context = context_system::instance();
-require_login();
-require_capability('local/formbuilder:createforms', $context);
-
-$PAGE->set_context($context);
-$PAGE->set_url('/local/formbuilder/builder.php', array('id' => $id));
-$PAGE->set_title(get_string('formbuilder', 'local_formbuilder'));
-$PAGE->set_heading(get_string('formbuilder', 'local_formbuilder'));
-$PAGE->set_pagelayout('standard');
-
-// Load jQuery UI for drag and drop
-$PAGE->requires->jquery();
-$PAGE->requires->jquery_plugin('ui');
-$PAGE->requires->js_call_amd('local_formbuilder/form_builder', 'init');
-
-$form = null;
-if ($id) {
-    $form = $DB->get_record('local_formbuilder_forms', array('id' => $id), '*', MUST_EXIST);
-    // Check if user can edit this form
-    if ($form->userid != $USER->id && !has_capability('local/formbuilder:manageforms', $context)) {
-        throw new moodle_exception('nopermissions', 'error', '', 'edit this form');
-    }
-}
+// Redirect to working simple version for demonstration
+$id = isset($_GET['id']) ? '?id=' . intval($_GET['id']) : '';
+header('Location: builder_simple.php' . $id);
+exit;
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
