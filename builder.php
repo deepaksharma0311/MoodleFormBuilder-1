@@ -1,7 +1,6 @@
 <?php
-// Simple form builder without complex Moodle dependencies
-
 session_start();
+require_once 'database.php';
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -11,42 +10,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: index.php');
         exit;
     } else {
-        // In a real implementation, this would save to database
-        $formData = [
-            'name' => $_POST['name'] ?? '',
-            'description' => $_POST['description'] ?? '',
-            'formdata' => $_POST['formdata'] ?? '{}',
-            'settings' => json_encode([
-                'notifyowner' => isset($_POST['notifyowner']),
-                'notifysubmitter' => isset($_POST['notifysubmitter']),
-                'redirecturl' => $_POST['redirecturl'] ?? '',
-                'custommessage' => $_POST['custommessage'] ?? '',
-                'multipages' => isset($_POST['multipages'])
-            ])
-        ];
-        
-        $_SESSION['form_saved'] = true;
-        $_SESSION['form_data'] = $formData;
-        header('Location: index.php?success=1');
-        exit;
+        try {
+            $db = new FormBuilderDB();
+            $formData = [
+                'id' => $id,
+                'name' => $_POST['name'] ?? '',
+                'description' => $_POST['description'] ?? '',
+                'formdata' => $_POST['formdata'] ?? '{}',
+                'settings' => json_encode([
+                    'notifyowner' => isset($_POST['notifyowner']),
+                    'notifysubmitter' => isset($_POST['notifysubmitter']),
+                    'redirecturl' => $_POST['redirecturl'] ?? '',
+                    'custommessage' => $_POST['custommessage'] ?? '',
+                    'multipages' => isset($_POST['multipages'])
+                ])
+            ];
+            
+            $savedId = $db->saveForm($formData);
+            header('Location: index.php?success=1');
+            exit;
+        } catch (Exception $e) {
+            $error = "Failed to save form: " . $e->getMessage();
+        }
     }
 }
 
-// Sample form data for editing
+// Load form data for editing
 $form = null;
 if ($id) {
-    $form = (object)[
-        'id' => $id,
-        'name' => 'Sample Contact Form',
-        'description' => 'A demonstration contact form with multiple field types',
-        'formdata' => json_encode([
-            'fields' => [
-                ['id' => 'field_1', 'type' => 'text', 'label' => 'Full Name', 'required' => true],
-                ['id' => 'field_2', 'type' => 'email', 'label' => 'Email Address', 'required' => true],
-                ['id' => 'field_3', 'type' => 'textarea', 'label' => 'Message', 'required' => false]
-            ]
-        ])
-    ];
+    try {
+        $db = new FormBuilderDB();
+        $form = $db->getFormById($id);
+    } catch (Exception $e) {
+        $error = "Failed to load form: " . $e->getMessage();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -68,6 +65,10 @@ if ($id) {
                     <a href="index.php" class="btn btn-secondary"><i class="fa fa-arrow-left"></i> Back</a>
                 </div>
             </div>
+            
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+            <?php endif; ?>
 
             <form method="post" class="form-builder-form">
                 <!-- Basic form information -->
@@ -177,7 +178,7 @@ if ($id) {
                 </div>
 
                 <!-- Hidden field for form data -->
-                <input type="hidden" name="formdata" id="formdata" value="">
+                <input type="hidden" name="formdata" id="formdata" value="<?php echo $form ? htmlspecialchars($form->formdata) : ''; ?>">
 
                 <!-- Action buttons -->
                 <div class="form-actions d-flex gap-2">

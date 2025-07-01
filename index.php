@@ -1,33 +1,40 @@
 <?php
 session_start();
+require_once 'database.php';
 
-// Sample forms for demonstration
-$forms = [
-    (object)[
-        'id' => 1,
-        'name' => 'Contact Form',
-        'description' => 'Basic contact form for inquiries',
-        'timecreated' => time() - 172800,
-        'timemodified' => time() - 86400,
-        'active' => 1
-    ],
-    (object)[
-        'id' => 2,
-        'name' => 'Survey Form',
-        'description' => 'Customer satisfaction survey with grid fields',
-        'timecreated' => time() - 259200,
-        'timemodified' => time() - 172800,
-        'active' => 1
-    ],
-    (object)[
-        'id' => 3,
-        'name' => 'Registration Form',
-        'description' => 'Event registration with calculations',
-        'timecreated' => time() - 345600,
-        'timemodified' => time() - 259200,
-        'active' => 1
-    ]
-];
+// Load forms from database
+try {
+    $db = new FormBuilderDB();
+    $forms = $db->getAllForms();
+} catch (Exception $e) {
+    // Fallback to sample data if database is not available
+    $forms = [
+        (object)[
+            'id' => 1,
+            'name' => 'Contact Form',
+            'description' => 'Basic contact form for inquiries',
+            'timecreated' => time() - 172800,
+            'timemodified' => time() - 86400,
+            'active' => 1
+        ],
+        (object)[
+            'id' => 2,
+            'name' => 'Survey Form', 
+            'description' => 'Customer satisfaction survey with grid fields',
+            'timecreated' => time() - 259200,
+            'timemodified' => time() - 172800,
+            'active' => 1
+        ],
+        (object)[
+            'id' => 3,
+            'name' => 'Registration Form',
+            'description' => 'Event registration with calculations',
+            'timecreated' => time() - 345600,
+            'timemodified' => time() - 259200,
+            'active' => 1
+        ]
+    ];
+}
 
 $successMessage = '';
 if (isset($_GET['success']) && $_GET['success'] == '1') {
