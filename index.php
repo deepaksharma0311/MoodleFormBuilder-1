@@ -1,39 +1,45 @@
 <?php
-session_start();
-require_once 'database.php';
-
-// Load forms from database
-try {
-    $db = new FormBuilderDB();
-    $forms = $db->getAllForms();
-} catch (Exception $e) {
-    // Fallback to sample data if database is not available
-    $forms = [
-        (object)[
-            'id' => 1,
-            'name' => 'Contact Form',
-            'description' => 'Basic contact form for inquiries',
-            'timecreated' => time() - 172800,
-            'timemodified' => time() - 86400,
-            'active' => 1
-        ],
-        (object)[
-            'id' => 2,
-            'name' => 'Survey Form', 
-            'description' => 'Customer satisfaction survey with grid fields',
-            'timecreated' => time() - 259200,
-            'timemodified' => time() - 172800,
-            'active' => 1
-        ],
-        (object)[
-            'id' => 3,
-            'name' => 'Registration Form',
-            'description' => 'Event registration with calculations',
-            'timecreated' => time() - 345600,
-            'timemodified' => time() - 259200,
-            'active' => 1
-        ]
-    ];
+// For standalone demo, we'll simulate Moodle environment
+if (!defined('MOODLE_INTERNAL')) {
+    // Simulate Moodle globals for standalone demo
+    class MockDB {
+        public function get_records($table, $conditions = null, $sort = '') {
+            // Return sample data for demo
+            return [
+                (object)[
+                    'id' => 1,
+                    'name' => 'Contact Form',
+                    'description' => 'Basic contact form for inquiries',
+                    'timecreated' => time() - 172800,
+                    'timemodified' => time() - 86400,
+                    'active' => 1
+                ],
+                (object)[
+                    'id' => 2,
+                    'name' => 'Survey Form',
+                    'description' => 'Customer satisfaction survey with grid fields',
+                    'timecreated' => time() - 259200,
+                    'timemodified' => time() - 172800,
+                    'active' => 1
+                ],
+                (object)[
+                    'id' => 3,
+                    'name' => 'Registration Form',
+                    'description' => 'Event registration with calculations',
+                    'timecreated' => time() - 345600,
+                    'timemodified' => time() - 259200,
+                    'active' => 1
+                ]
+            ];
+        }
+    }
+    
+    $DB = new MockDB();
+    $forms = $DB->get_records('local_formbuilder_forms', null, 'timemodified DESC');
+} else {
+    // Running in actual Moodle environment
+    require_once($CFG->dirroot . '/local/formbuilder/classes/form/form_manager.php');
+    $forms = \local_formbuilder\form\form_manager::get_all_forms();
 }
 
 $successMessage = '';

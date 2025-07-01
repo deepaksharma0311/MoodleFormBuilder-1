@@ -1,6 +1,34 @@
 <?php
-session_start();
-require_once 'database.php';
+// For standalone demo, we'll simulate Moodle environment
+if (!defined('MOODLE_INTERNAL')) {
+    // Simulate Moodle database operations for demo
+    class MockDB {
+        public function get_record($table, $conditions) {
+            // Return sample form data for demo
+            return (object)[
+                'id' => $conditions['id'],
+                'name' => 'Sample Contact Form',
+                'description' => 'A demonstration contact form with multiple field types',
+                'formdata' => json_encode([
+                    'fields' => [
+                        ['id' => 'field_1', 'type' => 'text', 'label' => 'Full Name', 'required' => true],
+                        ['id' => 'field_2', 'type' => 'email', 'label' => 'Email Address', 'required' => true],
+                        ['id' => 'field_3', 'type' => 'textarea', 'label' => 'Message', 'required' => false]
+                    ]
+                ])
+            ];
+        }
+        
+        public function insert_record($table, $record) {
+            return rand(1, 1000); // Simulate new ID
+        }
+        
+        public function update_record($table, $record) {
+            return true;
+        }
+    }
+    $DB = new MockDB();
+}
 
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -10,40 +38,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: index.php');
         exit;
     } else {
-        try {
-            $db = new FormBuilderDB();
-            $formData = [
-                'id' => $id,
-                'name' => $_POST['name'] ?? '',
-                'description' => $_POST['description'] ?? '',
-                'formdata' => $_POST['formdata'] ?? '{}',
-                'settings' => json_encode([
-                    'notifyowner' => isset($_POST['notifyowner']),
-                    'notifysubmitter' => isset($_POST['notifysubmitter']),
-                    'redirecturl' => $_POST['redirecturl'] ?? '',
-                    'custommessage' => $_POST['custommessage'] ?? '',
-                    'multipages' => isset($_POST['multipages'])
-                ])
-            ];
-            
-            $savedId = $db->saveForm($formData);
-            header('Location: index.php?success=1');
-            exit;
-        } catch (Exception $e) {
-            $error = "Failed to save form: " . $e->getMessage();
+        // Create form data record
+        $record = new stdClass();
+        $record->name = $_POST['name'] ?? '';
+        $record->description = $_POST['description'] ?? '';
+        $record->formdata = $_POST['formdata'] ?? '{}';
+        $record->settings = json_encode([
+            'notifyowner' => isset($_POST['notifyowner']),
+            'notifysubmitter' => isset($_POST['notifysubmitter']),
+            'redirecturl' => $_POST['redirecturl'] ?? '',
+            'custommessage' => $_POST['custommessage'] ?? '',
+            'multipages' => isset($_POST['multipages'])
+        ]);
+        $record->timemodified = time();
+        
+        if ($id > 0) {
+            // Update existing form
+            $record->id = $id;
+            $DB->update_record('local_formbuilder_forms', $record);
+        } else {
+            // Create new form
+            $record->timecreated = time();
+            $record->active = 1;
+            $DB->insert_record('local_formbuilder_forms', $record);
         }
+        
+        header('Location: index.php?success=1');
+        exit;
     }
 }
 
 // Load form data for editing
 $form = null;
 if ($id) {
-    try {
-        $db = new FormBuilderDB();
-        $form = $db->getFormById($id);
-    } catch (Exception $e) {
-        $error = "Failed to load form: " . $e->getMessage();
-    }
+    $form = $DB->get_record('local_formbuilder_forms', ['id' => $id]);
 }
 ?>
 <!DOCTYPE html>

@@ -4,9 +4,11 @@
 A comprehensive Moodle local plugin that provides advanced form building capabilities with drag-and-drop interface, supporting all 14 LMS requirements specified.
 
 ## Recent Changes
-- **2025-07-01**: Fixed PHP errors in index.php by removing dependency on missing classes
-- **2025-07-01**: Implemented working demonstration with mock data
-- **2025-07-01**: Created comprehensive form builder with 17 field types
+- **2025-07-01**: Integrated proper Moodle database API instead of standalone database
+- **2025-07-01**: Created form_manager class for Moodle-compatible database operations
+- **2025-07-01**: Fixed PHP errors and implemented proper Moodle architecture
+- **2025-07-01**: Removed standalone database.php file
+- **2025-07-01**: Added mock database layer for standalone demo capability
 
 ## Current Status
 The plugin implements all required features:
