@@ -272,11 +272,18 @@ if ($id) {
             console.log("Adding field to canvas:", fieldType);
             var field = createFieldElement(fieldType);
             console.log("Created field element:", field);
+            
+            // Remove drop zone and add the field
             $("#form-fields .drop-zone").remove();
             $("#form-fields").append(field);
-            console.log("Field added to canvas");
+            console.log("Field added to canvas. Total fields now:", $("#form-fields .form-field").length);
+            
+            // Select the new field and update form data
             selectField(field);
             updateFormData();
+            
+            // Show confirmation
+            console.log("Field " + fieldType + " successfully added with ID:", field.data("id"));
         }
         
         function createField(fieldType, element) {
@@ -418,13 +425,32 @@ if ($id) {
             $("#form-fields .form-field").each(function() {
                 var field = $(this);
                 var fieldData = {
-                    id: field.data("id"),
-                    type: field.data("type"),
-                    label: field.find("label").first().text() || "Field"
+                    id: field.data("id") || "field_" + Math.random().toString(36).substr(2, 9),
+                    type: field.data("type") || "text",
+                    label: field.find("label").first().text() || "Field",
+                    required: field.hasClass("required") || false,
+                    placeholder: field.find("input, textarea").attr("placeholder") || "",
+                    helptext: field.data("helptext") || ""
                 };
+                
+                // Add type-specific properties
+                if (["select", "radio", "checkbox"].includes(fieldData.type)) {
+                    var options = [];
+                    field.find("option").each(function() {
+                        if ($(this).text().trim() !== '') {
+                            options.push($(this).text().trim());
+                        }
+                    });
+                    if (options.length === 0) {
+                        options = ["Option 1", "Option 2"];
+                    }
+                    fieldData.options = options;
+                }
+                
                 formData.fields.push(fieldData);
             });
             
+            console.log("Updated form data:", formData);
             $("#formdata").val(JSON.stringify(formData));
         }
         
@@ -458,6 +484,39 @@ if ($id) {
             updateFormData();
         }
         <?php endif; ?>
+        
+        // Ensure form data is updated before submission
+        $("form.form-builder-form").on("submit", function(e) {
+            console.log("Form being submitted");
+            updateFormData();
+            var formDataValue = $("#formdata").val();
+            console.log("Final form data:", formDataValue);
+            
+            // Validate form has required fields
+            var formName = $("input[name='name']").val();
+            if (!formName || formName.trim() === '') {
+                alert("Please enter a form name");
+                e.preventDefault();
+                return false;
+            }
+            
+            // Check if we have any fields
+            try {
+                var data = JSON.parse(formDataValue);
+                console.log("Parsed form data:", data);
+                if (!data.fields || data.fields.length === 0) {
+                    console.log("No fields found, creating empty structure");
+                    $("#formdata").val(JSON.stringify({fields: []}));
+                }
+            } catch (e) {
+                console.error("Error parsing form data:", e);
+                $("#formdata").val(JSON.stringify({fields: []}));
+            }
+        });
+        
+        // Call updateFormData initially to ensure hidden field is populated
+        updateFormData();
+        console.log("Initial form data set:", $("#formdata").val());
     });
     </script>
 </body>
