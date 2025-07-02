@@ -37,5 +37,14 @@ $capabilities = array(
             'user' => CAP_ALLOW,
             'guest' => CAP_ALLOW
         )
+    ),
+    'local/formbuilder:viewsubmissions' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW
+        )
     )
 );

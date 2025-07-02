@@ -263,4 +263,108 @@ class form_manager {
 
         return $errors;
     }
+
+    /**
+     * Get form submissions
+     */
+    public function get_form_submissions($formid) {
+        global $DB;
+        
+        return $DB->get_records('local_formbuilder_submissions', 
+            array('formid' => $formid), 
+            'timecreated DESC'
+        );
+    }
+
+    /**
+     * Delete a submission
+     */
+    public function delete_submission($submissionid) {
+        global $DB;
+        
+        return $DB->delete_records('local_formbuilder_submissions', array('id' => $submissionid));
+    }
+
+    /**
+     * Split form into pages based on pagebreak fields
+     */
+    public static function get_form_pages($form_structure) {
+        if (!isset($form_structure['fields'])) {
+            return [[]]; // Return single empty page if no fields
+        }
+        
+        $pages = [];
+        $current_page = [];
+        
+        foreach ($form_structure['fields'] as $field) {
+            if ($field['type'] === 'pagebreak') {
+                // End current page and start new one
+                if (!empty($current_page)) {
+                    $pages[] = $current_page;
+                    $current_page = [];
+                }
+            } else {
+                // Add field to current page
+                $current_page[] = $field;
+            }
+        }
+        
+        // Add the last page if it has fields
+        if (!empty($current_page)) {
+            $pages[] = $current_page;
+        }
+        
+        // If no pages were created, return all fields as one page
+        if (empty($pages)) {
+            $pages[] = $form_structure['fields'];
+        }
+        
+        return $pages;
+    }
+
+    /**
+     * Render a specific page of a multi-step form
+     */
+    public static function render_form_page($form, $page_fields, $page_number, $total_pages, $data = []) {
+        $html = '';
+        
+        // Page indicator
+        if ($total_pages > 1) {
+            $html .= '<div class="form-progress mb-4">';
+            $html .= '<div class="progress">';
+            $progress = (($page_number + 1) / $total_pages) * 100;
+            $html .= "<div class=\"progress-bar\" role=\"progressbar\" style=\"width: {$progress}%\" aria-valuenow=\"{$progress}\" aria-valuemin=\"0\" aria-valuemax=\"100\">";
+            $html .= "Step " . ($page_number + 1) . " of {$total_pages}";
+            $html .= '</div>';
+            $html .= '</div>';
+            $html .= '</div>';
+        }
+        
+        // Render fields for this page
+        foreach ($page_fields as $field) {
+            $value = $data[$field['id']] ?? '';
+            $html .= self::render_form_field($field, $value);
+        }
+        
+        // Navigation buttons
+        if ($total_pages > 1) {
+            $html .= '<div class="form-navigation mt-4">';
+            
+            // Previous button
+            if ($page_number > 0) {
+                $html .= '<button type="button" class="btn btn-secondary me-2" onclick="previousPage()">Previous</button>';
+            }
+            
+            // Next/Submit button
+            if ($page_number < $total_pages - 1) {
+                $html .= '<button type="button" class="btn btn-primary" onclick="nextPage()">Next</button>';
+            } else {
+                $html .= '<button type="submit" class="btn btn-success">Submit Form</button>';
+            }
+            
+            $html .= '</div>';
+        }
+        
+        return $html;
+    }
 }

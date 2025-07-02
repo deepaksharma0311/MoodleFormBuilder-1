@@ -9,6 +9,9 @@ A comprehensive Moodle local plugin for advanced form building with drag-and-dro
 - **2025-07-02**: Built working demo with 12 field types and template system
 - **2025-07-02**: Implemented proper database schema and capabilities system
 - **2025-07-02**: Added standalone demo for immediate testing (demo_standalone.php)
+- **2025-07-02**: Implemented submissions page with detailed view and export functionality
+- **2025-07-02**: Fixed index page dropdown menu toggle with Bootstrap JavaScript
+- **2025-07-02**: Added multi-step form support with page break fields and progress indicators
 
 ## Current Status
 The plugin implements all required features:

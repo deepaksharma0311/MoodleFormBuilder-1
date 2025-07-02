@@ -94,3 +94,30 @@ $string['privacy:metadata:userid'] = 'The ID of the user.';
 $string['privacy:metadata:submissiondata'] = 'The form submission data.';
 $string['privacy:metadata:timecreated'] = 'The time when the record was created.';
 $string['privacy:metadata:ipaddress'] = 'The IP address of the user who submitted the form.';
+
+// Submissions page
+$string['viewsubmissions'] = 'View Submissions';
+$string['backtoforms'] = 'Back to Forms';
+$string['totalsubmissions'] = 'Total Submissions';
+$string['latestsubmission'] = 'Latest Submission';
+$string['formcreated'] = 'Form Created';
+$string['submissionlist'] = 'Submission List';
+$string['exportcsv'] = 'Export CSV';
+$string['exportjson'] = 'Export JSON';
+$string['nosubmissionsdesc'] = 'This form has not received any submissions yet.';
+$string['submissiondate'] = 'Submission Date';
+$string['submitter'] = 'Submitter';
+$string['responses'] = 'Responses';
+$string['actions'] = 'Actions';
+$string['view'] = 'View';
+$string['delete'] = 'Delete';
+$string['anonymous'] = 'Anonymous';
+$string['fields'] = 'fields';
+$string['submissiondetails'] = 'Submission Details';
+$string['close'] = 'Close';
+$string['preview'] = 'Preview';
+$string['form'] = 'Form';
+$string['none'] = 'None';
+
+// Capabilities
+$string['formbuilder:viewsubmissions'] = 'View form submissions';
