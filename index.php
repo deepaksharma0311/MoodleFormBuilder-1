@@ -87,7 +87,7 @@ if (empty($forms)) {
         
         echo html_writer::start_tag('li');
         echo html_writer::link(
-            new moodle_url('/local/formbuilder/submissions.php', ['id' => $form->id]),
+            new moodle_url('/local/formbuilder/submissions.php', ['formid' => $form->id]),
             '📝 Submissions',
             ['class' => 'dropdown-item']
         );
@@ -144,7 +144,10 @@ echo '
 ';
 echo html_writer::end_tag('style');
 
-// Add JavaScript for delete confirmation
+// Add Bootstrap JavaScript for dropdowns
+echo html_writer::script('', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js');
+
+// Add JavaScript for delete confirmation and dropdown functionality
 echo html_writer::start_tag('script');
 echo '
 function confirmDelete(formId) {
@@ -152,6 +155,15 @@ function confirmDelete(formId) {
         window.location.href = "' . $CFG->wwwroot . '/local/formbuilder/delete.php?id=" + formId;
     }
 }
+
+// Initialize Bootstrap dropdowns
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize all dropdowns
+    var dropdownElementList = [].slice.call(document.querySelectorAll(".dropdown-toggle"));
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl);
+    });
+});
 ';
 echo html_writer::end_tag('script');
 

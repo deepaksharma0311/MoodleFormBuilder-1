@@ -1,42 +1,9 @@
-<?php
-// Standalone demo for testing form builder functionality
-// This file demonstrates the form builder without Moodle dependencies
-
-// Prevent any config.php loading for standalone demo
-if (!defined('CLI_SCRIPT')) {
-    define('CLI_SCRIPT', false);
-}
-
-session_start();
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action']) && $_POST['action'] === 'save_form') {
-        $formData = [
-            'name' => $_POST['name'] ?? '',
-            'description' => $_POST['description'] ?? '',
-            'formdata' => $_POST['formdata'] ?? '{}',
-            'settings' => $_POST['settings'] ?? '{}'
-        ];
-        
-        // Store in session for demo
-        $_SESSION['saved_form'] = $formData;
-        $_SESSION['success'] = 'Form saved successfully!';
-        
-        header('Location: demo_standalone.php');
-        exit;
-    }
-}
-
-$success = $_SESSION['success'] ?? null;
-unset($_SESSION['success']);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Builder Demo - Moodle Plugin</title>
+    <title>Moodle Form Builder Plugin - Professional Demo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .field-type {
@@ -96,6 +63,13 @@ unset($_SESSION['success']);
             color: white;
             padding: 60px 0;
         }
+        .template-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .template-card:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -103,58 +77,59 @@ unset($_SESSION['success']);
     <div class="feature-demo">
         <div class="container text-center">
             <h1 class="display-4 mb-4">🚀 Moodle Form Builder Plugin</h1>
-            <p class="lead mb-4">Complete drag-and-drop form creation system with 12 field types, validation, and submission management</p>
+            <p class="lead mb-4">Professional drag-and-drop form creation with 12 field types, validation, and submission management</p>
             <div class="row mt-5">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <h5>✨ Easy to Use</h5>
-                    <p>Click to add fields, configure properties, and create professional forms in minutes</p>
+                    <p>Click to add fields, configure properties instantly</p>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <h5>🔧 12 Field Types</h5>
-                    <p>Text, Email, Date, Dropdown, Radio, Checkbox, File Upload, and more</p>
+                    <p>Text, Email, Date, Dropdown, Radio, Checkbox, File Upload</p>
                 </div>
-                <div class="col-md-4">
-                    <h5>📊 Submission Management</h5>
-                    <p>Built-in validation, email notifications, and comprehensive data collection</p>
+                <div class="col-md-3">
+                    <h5>📊 Validation</h5>
+                    <p>Built-in validation, required fields, custom messages</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>📱 Mobile Ready</h5>
+                    <p>Responsive design, works on all devices</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="container mt-5">
-        <?php if ($success): ?>
-            <div class="alert alert-success alert-dismissible fade show">
-                <?= htmlspecialchars($success) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Quick Demo Forms -->
+        <!-- Quick Demo Templates -->
         <div class="row mb-5">
             <div class="col-12">
-                <h2>Quick Start - Try These Examples</h2>
+                <h2>Quick Start Templates</h2>
+                <p class="text-muted">Click any template to load it into the form builder</p>
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Contact Form</h5>
-                                <button onclick="loadTemplate('contact')" class="btn btn-outline-primary">Load Template</button>
+                        <div class="card template-card" onclick="loadTemplate('contact')">
+                            <div class="card-body text-center">
+                                <h5>📧 Contact Form</h5>
+                                <p class="text-muted">Name, Email, Subject, Message</p>
+                                <button class="btn btn-outline-primary">Load Template</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Survey Form</h5>
-                                <button onclick="loadTemplate('survey')" class="btn btn-outline-primary">Load Template</button>
+                        <div class="card template-card" onclick="loadTemplate('survey')">
+                            <div class="card-body text-center">
+                                <h5>📊 Survey Form</h5>
+                                <p class="text-muted">Satisfaction ratings, choices, feedback</p>
+                                <button class="btn btn-outline-primary">Load Template</button>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>Registration Form</h5>
-                                <button onclick="loadTemplate('registration')" class="btn btn-outline-primary">Load Template</button>
+                        <div class="card template-card" onclick="loadTemplate('registration')">
+                            <div class="card-body text-center">
+                                <h5>🎫 Registration Form</h5>
+                                <p class="text-muted">Event signup with ticket selection</p>
+                                <button class="btn btn-outline-primary">Load Template</button>
                             </div>
                         </div>
                     </div>
@@ -162,124 +137,130 @@ unset($_SESSION['success']);
             </div>
         </div>
 
-        <!-- Form Builder -->
-        <form method="post" id="formbuilder-form">
-            <input type="hidden" name="action" value="save_form">
-            
-            <!-- Form Information -->
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Form Information</h5>
+        <!-- Form Information -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Form Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="form-name" class="form-label">Form Name *</label>
+                            <input type="text" id="form-name" class="form-control" placeholder="Enter form name">
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="form-name" class="form-label">Form Name *</label>
-                                <input type="text" id="form-name" name="name" class="form-control" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="form-description" class="form-label">Description</label>
-                                <textarea id="form-description" name="description" class="form-control" rows="3"></textarea>
-                            </div>
+                        <div class="mb-3">
+                            <label for="form-description" class="form-label">Description</label>
+                            <textarea id="form-description" class="form-control" rows="3" placeholder="Describe your form"></textarea>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <button type="button" onclick="clearForm()" class="btn btn-outline-warning me-2">Clear All</button>
+                        <button type="button" onclick="previewForm()" class="btn btn-outline-info me-2">Preview</button>
+                        <button type="button" onclick="exportForm()" class="btn btn-success">Export JSON</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Builder Interface -->
+        <div class="row">
+            <!-- Field Types -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Field Types</h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('text')">
+                            📝 Text Input
                         </div>
-                        <div class="card-body">
-                            <button type="button" onclick="clearForm()" class="btn btn-outline-warning">Clear All Fields</button>
-                            <button type="button" onclick="previewForm()" class="btn btn-outline-info">Preview Form</button>
-                            <button type="submit" class="btn btn-success">Save Form</button>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('textarea')">
+                            📄 Textarea
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('email')">
+                            📧 Email
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('number')">
+                            🔢 Number
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('date')">
+                            📅 Date
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('select')">
+                            📋 Dropdown
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('checkbox')">
+                            ☑️ Checkbox
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('radio')">
+                            🔘 Radio Button
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('file')">
+                            📎 File Upload
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('heading')">
+                            📰 Heading
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('paragraph')">
+                            📃 Paragraph
+                        </div>
+                        <div class="field-type p-2 mb-2 border rounded" onclick="addField('pagebreak')">
+                            ➖ Page Break
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Form Builder Interface -->
-            <div class="row">
-                <!-- Field Types -->
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Field Types</h5>
-                        </div>
-                        <div class="card-body p-2" id="field-palette">
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('text')">
-                                📝 Text Input
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('textarea')">
-                                📄 Textarea
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('email')">
-                                📧 Email
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('number')">
-                                🔢 Number
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('date')">
-                                📅 Date
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('select')">
-                                📋 Dropdown
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('checkbox')">
-                                ☑️ Checkbox
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('radio')">
-                                🔘 Radio Button
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('file')">
-                                📎 File Upload
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('heading')">
-                                📰 Heading
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('paragraph')">
-                                📃 Paragraph
-                            </div>
-                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('pagebreak')">
-                                ➖ Page Break
-                            </div>
-                        </div>
+            <!-- Form Canvas -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Form Preview</h5>
                     </div>
-                </div>
-
-                <!-- Form Canvas -->
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Form Preview</h5>
-                        </div>
-                        <div class="card-body" id="form-canvas">
-                            <div id="form-fields">
-                                <div class="drop-zone text-center p-5 border border-dashed text-muted">
-                                    Click field types on the left to add them here
-                                </div>
+                    <div class="card-body" id="form-canvas">
+                        <div id="form-fields">
+                            <div class="drop-zone text-center p-5 border border-dashed text-muted">
+                                Click field types on the left to add them here
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Field Properties -->
-                <div class="col-md-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="mb-0">Field Properties</h5>
-                        </div>
-                        <div class="card-body" id="field-properties">
-                            <p class="text-muted">Select a field to edit its properties</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <input type="hidden" name="formdata" id="formdata" value="">
-            <input type="hidden" name="settings" id="settings" value="{}">
-        </form>
+            <!-- Field Properties -->
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Field Properties</h5>
+                    </div>
+                    <div class="card-body" id="field-properties">
+                        <p class="text-muted">Select a field to edit its properties</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form JSON Output -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Form JSON (for Moodle Integration)</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea id="form-json" class="form-control" rows="6" readonly placeholder="Form structure will appear here as JSON"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Form Preview Modal -->
@@ -308,35 +289,35 @@ unset($_SESSION['success']);
         const templates = {
             contact: {
                 name: "Contact Form",
-                description: "Basic contact form for inquiries",
+                description: "Basic contact form for customer inquiries",
                 fields: [
-                    {id: "field_1", type: "text", label: "Full Name", required: true},
-                    {id: "field_2", type: "email", label: "Email Address", required: true},
-                    {id: "field_3", type: "text", label: "Subject", required: true},
-                    {id: "field_4", type: "textarea", label: "Message", required: true}
+                    {id: "field_1", type: "text", label: "Full Name", required: true, placeholder: "Enter your full name"},
+                    {id: "field_2", type: "email", label: "Email Address", required: true, placeholder: "your@email.com"},
+                    {id: "field_3", type: "text", label: "Subject", required: true, placeholder: "What is this about?"},
+                    {id: "field_4", type: "textarea", label: "Message", required: true, placeholder: "Your message here..."}
                 ]
             },
             survey: {
                 name: "Customer Satisfaction Survey",
-                description: "Help us improve our services",
+                description: "Help us improve our services with your feedback",
                 fields: [
-                    {id: "field_1", type: "text", label: "Your Name", required: false},
+                    {id: "field_1", type: "text", label: "Your Name", required: false, placeholder: "Optional"},
                     {id: "field_2", type: "radio", label: "Overall Satisfaction", required: true, options: ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very Dissatisfied"]},
-                    {id: "field_3", type: "select", label: "How did you hear about us?", required: false, options: ["Google", "Social Media", "Friend", "Advertisement", "Other"]},
-                    {id: "field_4", type: "checkbox", label: "Would you recommend us?", required: false},
-                    {id: "field_5", type: "textarea", label: "Additional Comments", required: false}
+                    {id: "field_3", type: "select", label: "How did you hear about us?", required: false, options: ["Google Search", "Social Media", "Friend Referral", "Advertisement", "Other"]},
+                    {id: "field_4", type: "checkbox", label: "Would you recommend us to others?", required: false},
+                    {id: "field_5", type: "textarea", label: "Additional Comments", required: false, placeholder: "Any suggestions or feedback?"}
                 ]
             },
             registration: {
                 name: "Event Registration",
-                description: "Register for our upcoming event",
+                description: "Register for our upcoming conference",
                 fields: [
-                    {id: "field_1", type: "text", label: "Full Name", required: true},
-                    {id: "field_2", type: "email", label: "Email Address", required: true},
-                    {id: "field_3", type: "text", label: "Phone Number", required: true},
-                    {id: "field_4", type: "select", label: "Ticket Type", required: true, options: ["Regular - $50", "VIP - $100", "Student - $25"]},
-                    {id: "field_5", type: "number", label: "Number of Tickets", required: true},
-                    {id: "field_6", type: "textarea", label: "Special Requirements", required: false}
+                    {id: "field_1", type: "text", label: "Full Name", required: true, placeholder: "First and Last Name"},
+                    {id: "field_2", type: "email", label: "Email Address", required: true, placeholder: "your@email.com"},
+                    {id: "field_3", type: "text", label: "Phone Number", required: true, placeholder: "(555) 123-4567"},
+                    {id: "field_4", type: "select", label: "Ticket Type", required: true, options: ["Regular - $50", "VIP - $100", "Student - $25", "Speaker - Free"]},
+                    {id: "field_5", type: "number", label: "Number of Tickets", required: true, placeholder: "1"},
+                    {id: "field_6", type: "textarea", label: "Dietary Requirements", required: false, placeholder: "Any allergies or special needs?"}
                 ]
             }
         };
@@ -364,7 +345,6 @@ unset($_SESSION['success']);
                 
                 fieldElement.dataset.required = fieldData.required || false;
                 fieldElement.dataset.placeholder = fieldData.placeholder || "";
-                fieldElement.dataset.helptext = fieldData.helptext || "";
                 
                 if (fieldData.options) {
                     fieldElement.dataset.options = JSON.stringify(fieldData.options);
@@ -509,13 +489,6 @@ unset($_SESSION['success']);
                     `;
                 }
                 
-                html += `
-                    <div class="mb-3">
-                        <label class="form-label">Help Text</label>
-                        <textarea id="prop-helptext" class="form-control" rows="2" onchange="updateFieldHelpText()">${fieldElement.dataset.helptext || ''}</textarea>
-                    </div>
-                `;
-                
                 if (["select", "radio", "checkbox"].includes(type)) {
                     const options = fieldElement.dataset.options ? JSON.parse(fieldElement.dataset.options) : ["Option 1", "Option 2", "Option 3"];
                     html += `
@@ -559,13 +532,6 @@ unset($_SESSION['success']);
             updateFormData();
         }
 
-        function updateFieldHelpText() {
-            if (!selectedField) return;
-            const helptext = document.getElementById("prop-helptext").value;
-            selectedField.dataset.helptext = helptext;
-            updateFormData();
-        }
-
         function updateFieldOptions() {
             if (!selectedField) return;
             const options = document.getElementById("prop-options").value.split("\n").filter(o => o.trim());
@@ -604,10 +570,15 @@ unset($_SESSION['success']);
 
         // Preview form
         function previewForm() {
-            const formData = JSON.parse(document.getElementById("formdata").value || '{"fields":[]}');
+            const formData = JSON.parse(document.getElementById("form-json").value || '{"fields":[]}');
             const formName = document.getElementById("form-name").value || "Untitled Form";
+            const formDescription = document.getElementById("form-description").value;
             
-            let html = `<h4>${formName}</h4>`;
+            let html = `<div class="mb-4"><h4>${formName}</h4>`;
+            if (formDescription) {
+                html += `<p class="text-muted">${formDescription}</p>`;
+            }
+            html += `</div>`;
             
             if (formData.fields.length === 0) {
                 html += `<p class="text-muted">No fields added to this form yet.</p>`;
@@ -662,6 +633,18 @@ unset($_SESSION['success']);
             }
         }
 
+        // Export form
+        function exportForm() {
+            const formData = document.getElementById("form-json").value;
+            const blob = new Blob([formData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'form-structure.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
         // Update form data
         function updateFormData() {
             const formData = { fields: [] };
@@ -672,8 +655,7 @@ unset($_SESSION['success']);
                     type: field.dataset.type,
                     label: field.querySelector("label, legend, h3, p")?.textContent || "Field",
                     required: field.dataset.required === "true",
-                    placeholder: field.dataset.placeholder || "",
-                    helptext: field.dataset.helptext || ""
+                    placeholder: field.dataset.placeholder || ""
                 };
                 
                 if (field.dataset.options) {
@@ -687,7 +669,7 @@ unset($_SESSION['success']);
                 formData.fields.push(fieldData);
             });
             
-            document.getElementById("formdata").value = JSON.stringify(formData);
+            document.getElementById("form-json").value = JSON.stringify(formData, null, 2);
             console.log("Form data updated:", formData);
         }
 
@@ -695,19 +677,6 @@ unset($_SESSION['success']);
         document.addEventListener("DOMContentLoaded", function() {
             updateFormData();
             console.log("Form builder demo initialized");
-        });
-
-        // Form submission
-        document.getElementById("formbuilder-form").addEventListener("submit", function(e) {
-            const formName = document.getElementById("form-name").value;
-            if (!formName.trim()) {
-                alert("Please enter a form name");
-                e.preventDefault();
-                return false;
-            }
-            
-            updateFormData();
-            console.log("Submitting form...");
         });
     </script>
 </body>
