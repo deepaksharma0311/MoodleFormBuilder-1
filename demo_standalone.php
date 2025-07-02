@@ -1,0 +1,709 @@
+<?php
+// Standalone demo for testing form builder functionality
+// This file demonstrates the form builder without Moodle dependencies
+
+session_start();
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action']) && $_POST['action'] === 'save_form') {
+        $formData = [
+            'name' => $_POST['name'] ?? '',
+            'description' => $_POST['description'] ?? '',
+            'formdata' => $_POST['formdata'] ?? '{}',
+            'settings' => $_POST['settings'] ?? '{}'
+        ];
+        
+        // Store in session for demo
+        $_SESSION['saved_form'] = $formData;
+        $_SESSION['success'] = 'Form saved successfully!';
+        
+        header('Location: demo_standalone.php');
+        exit;
+    }
+}
+
+$success = $_SESSION['success'] ?? null;
+unset($_SESSION['success']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Builder Demo - Moodle Plugin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .field-type {
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .field-type:hover {
+            background-color: #e9ecef !important;
+            border-color: #007bff !important;
+        }
+        .form-field {
+            position: relative;
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+        }
+        .form-field:hover {
+            border-color: #007bff;
+        }
+        .form-field.selected {
+            border-color: #007bff;
+            background-color: #f0f8ff;
+        }
+        .field-controls {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        .btn-field-control {
+            padding: 2px 6px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+        #form-canvas {
+            min-height: 400px;
+        }
+        .drop-zone {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .feature-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="feature-demo">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">🚀 Moodle Form Builder Plugin</h1>
+            <p class="lead mb-4">Complete drag-and-drop form creation system with 12 field types, validation, and submission management</p>
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <h5>✨ Easy to Use</h5>
+                    <p>Click to add fields, configure properties, and create professional forms in minutes</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>🔧 12 Field Types</h5>
+                    <p>Text, Email, Date, Dropdown, Radio, Checkbox, File Upload, and more</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>📊 Submission Management</h5>
+                    <p>Built-in validation, email notifications, and comprehensive data collection</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <?php if ($success): ?>
+            <div class="alert alert-success alert-dismissible fade show">
+                <?= htmlspecialchars($success) ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
+        <!-- Quick Demo Forms -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2>Quick Start - Try These Examples</h2>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Contact Form</h5>
+                                <button onclick="loadTemplate('contact')" class="btn btn-outline-primary">Load Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Survey Form</h5>
+                                <button onclick="loadTemplate('survey')" class="btn btn-outline-primary">Load Template</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>Registration Form</h5>
+                                <button onclick="loadTemplate('registration')" class="btn btn-outline-primary">Load Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Builder -->
+        <form method="post" id="formbuilder-form">
+            <input type="hidden" name="action" value="save_form">
+            
+            <!-- Form Information -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Form Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="form-name" class="form-label">Form Name *</label>
+                                <input type="text" id="form-name" name="name" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="form-description" class="form-label">Description</label>
+                                <textarea id="form-description" name="description" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <button type="button" onclick="clearForm()" class="btn btn-outline-warning">Clear All Fields</button>
+                            <button type="button" onclick="previewForm()" class="btn btn-outline-info">Preview Form</button>
+                            <button type="submit" class="btn btn-success">Save Form</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Builder Interface -->
+            <div class="row">
+                <!-- Field Types -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Field Types</h5>
+                        </div>
+                        <div class="card-body p-2" id="field-palette">
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('text')">
+                                📝 Text Input
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('textarea')">
+                                📄 Textarea
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('email')">
+                                📧 Email
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('number')">
+                                🔢 Number
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('date')">
+                                📅 Date
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('select')">
+                                📋 Dropdown
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('checkbox')">
+                                ☑️ Checkbox
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('radio')">
+                                🔘 Radio Button
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('file')">
+                                📎 File Upload
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('heading')">
+                                📰 Heading
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('paragraph')">
+                                📃 Paragraph
+                            </div>
+                            <div class="field-type p-2 mb-2 border rounded" onclick="addField('pagebreak')">
+                                ➖ Page Break
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Canvas -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Form Preview</h5>
+                        </div>
+                        <div class="card-body" id="form-canvas">
+                            <div id="form-fields">
+                                <div class="drop-zone text-center p-5 border border-dashed text-muted">
+                                    Click field types on the left to add them here
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Field Properties -->
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Field Properties</h5>
+                        </div>
+                        <div class="card-body" id="field-properties">
+                            <p class="text-muted">Select a field to edit its properties</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" name="formdata" id="formdata" value="">
+            <input type="hidden" name="settings" id="settings" value="{}">
+        </form>
+    </div>
+
+    <!-- Form Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="preview-content">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let fieldCounter = 0;
+        let selectedField = null;
+
+        // Form templates
+        const templates = {
+            contact: {
+                name: "Contact Form",
+                description: "Basic contact form for inquiries",
+                fields: [
+                    {id: "field_1", type: "text", label: "Full Name", required: true},
+                    {id: "field_2", type: "email", label: "Email Address", required: true},
+                    {id: "field_3", type: "text", label: "Subject", required: true},
+                    {id: "field_4", type: "textarea", label: "Message", required: true}
+                ]
+            },
+            survey: {
+                name: "Customer Satisfaction Survey",
+                description: "Help us improve our services",
+                fields: [
+                    {id: "field_1", type: "text", label: "Your Name", required: false},
+                    {id: "field_2", type: "radio", label: "Overall Satisfaction", required: true, options: ["Very Satisfied", "Satisfied", "Neutral", "Dissatisfied", "Very Dissatisfied"]},
+                    {id: "field_3", type: "select", label: "How did you hear about us?", required: false, options: ["Google", "Social Media", "Friend", "Advertisement", "Other"]},
+                    {id: "field_4", type: "checkbox", label: "Would you recommend us?", required: false},
+                    {id: "field_5", type: "textarea", label: "Additional Comments", required: false}
+                ]
+            },
+            registration: {
+                name: "Event Registration",
+                description: "Register for our upcoming event",
+                fields: [
+                    {id: "field_1", type: "text", label: "Full Name", required: true},
+                    {id: "field_2", type: "email", label: "Email Address", required: true},
+                    {id: "field_3", type: "text", label: "Phone Number", required: true},
+                    {id: "field_4", type: "select", label: "Ticket Type", required: true, options: ["Regular - $50", "VIP - $100", "Student - $25"]},
+                    {id: "field_5", type: "number", label: "Number of Tickets", required: true},
+                    {id: "field_6", type: "textarea", label: "Special Requirements", required: false}
+                ]
+            }
+        };
+
+        // Load template
+        function loadTemplate(templateName) {
+            const template = templates[templateName];
+            if (!template) return;
+
+            document.getElementById('form-name').value = template.name;
+            document.getElementById('form-description').value = template.description;
+
+            // Clear existing fields
+            clearForm();
+
+            // Add template fields
+            template.fields.forEach(fieldData => {
+                const fieldElement = createFieldElement(fieldData.type, fieldData.id);
+                
+                // Set properties
+                const labelElement = fieldElement.querySelector('label, legend, h3, p');
+                if (labelElement) {
+                    labelElement.textContent = fieldData.label;
+                }
+                
+                fieldElement.dataset.required = fieldData.required || false;
+                fieldElement.dataset.placeholder = fieldData.placeholder || "";
+                fieldElement.dataset.helptext = fieldData.helptext || "";
+                
+                if (fieldData.options) {
+                    fieldElement.dataset.options = JSON.stringify(fieldData.options);
+                    
+                    // Update select options
+                    const selectElement = fieldElement.querySelector('select');
+                    if (selectElement) {
+                        selectElement.innerHTML = fieldData.options.map(opt => `<option>${opt}</option>`).join('');
+                    }
+                }
+                
+                document.querySelector('.drop-zone')?.remove();
+                document.getElementById('form-fields').appendChild(fieldElement);
+            });
+
+            updateFormData();
+        }
+
+        // Add field to canvas
+        function addField(type) {
+            fieldCounter++;
+            const fieldId = "field_" + fieldCounter;
+            
+            console.log("Adding field:", type, "ID:", fieldId);
+            
+            // Remove drop zone
+            document.querySelector(".drop-zone")?.remove();
+            
+            // Create field element
+            const fieldElement = createFieldElement(type, fieldId);
+            document.getElementById("form-fields").appendChild(fieldElement);
+            
+            // Select the new field
+            selectField(fieldElement);
+            
+            // Update form data
+            updateFormData();
+            
+            console.log("Field added successfully");
+        }
+
+        // Create field element
+        function createFieldElement(type, fieldId) {
+            const div = document.createElement("div");
+            div.className = "form-field";
+            div.dataset.type = type;
+            div.dataset.id = fieldId;
+            div.onclick = function(e) {
+                e.stopPropagation();
+                selectField(this);
+            };
+            
+            // Field controls
+            const controls = document.createElement("div");
+            controls.className = "field-controls";
+            
+            const deleteBtn = document.createElement("button");
+            deleteBtn.type = "button";
+            deleteBtn.className = "btn-field-control btn-delete";
+            deleteBtn.innerHTML = "✕";
+            deleteBtn.onclick = function(e) {
+                e.stopPropagation();
+                removeField(div);
+            };
+            
+            controls.appendChild(deleteBtn);
+            div.appendChild(controls);
+            
+            // Field content
+            const content = getFieldHTML(type, fieldId);
+            div.innerHTML += content;
+            
+            return div;
+        }
+
+        // Get field HTML based on type
+        function getFieldHTML(type, fieldId) {
+            switch(type) {
+                case "text":
+                    return `<label class="form-label">Text Input</label><input type="text" class="form-control" placeholder="Enter text" disabled>`;
+                case "textarea":
+                    return `<label class="form-label">Textarea</label><textarea class="form-control" rows="3" placeholder="Enter text" disabled></textarea>`;
+                case "email":
+                    return `<label class="form-label">Email</label><input type="email" class="form-control" placeholder="email@example.com" disabled>`;
+                case "number":
+                    return `<label class="form-label">Number</label><input type="number" class="form-control" placeholder="Enter number" disabled>`;
+                case "date":
+                    return `<label class="form-label">Date</label><input type="date" class="form-control" disabled>`;
+                case "select":
+                    return `<label class="form-label">Dropdown</label><select class="form-control" disabled><option>Option 1</option><option>Option 2</option></select>`;
+                case "checkbox":
+                    return `<div class="form-check"><input type="checkbox" class="form-check-input" disabled><label class="form-check-label">Checkbox Option</label></div>`;
+                case "radio":
+                    return `<fieldset><legend class="form-label">Radio Button</legend><div class="form-check"><input type="radio" class="form-check-input" disabled><label class="form-check-label">Option 1</label></div></fieldset>`;
+                case "file":
+                    return `<label class="form-label">File Upload</label><input type="file" class="form-control" disabled>`;
+                case "heading":
+                    return `<h3 contenteditable="true">Heading Text</h3>`;
+                case "paragraph":
+                    return `<p contenteditable="true">Paragraph text goes here.</p>`;
+                case "pagebreak":
+                    return `<hr><div class="text-center text-muted small">Page Break</div><hr>`;
+                default:
+                    return `<label class="form-label">Unknown Field</label><input type="text" class="form-control" disabled>`;
+            }
+        }
+
+        // Select field
+        function selectField(fieldElement) {
+            document.querySelectorAll(".form-field").forEach(f => f.classList.remove("selected"));
+            fieldElement.classList.add("selected");
+            selectedField = fieldElement;
+            showFieldProperties(fieldElement);
+        }
+
+        // Show field properties
+        function showFieldProperties(fieldElement) {
+            const type = fieldElement.dataset.type;
+            const label = fieldElement.querySelector("label, legend, h3, p")?.textContent || "Field";
+            
+            let html = `
+                <div class="mb-3">
+                    <label class="form-label">Field Label</label>
+                    <input type="text" id="prop-label" class="form-control" value="${label}" onchange="updateFieldLabel()">
+                </div>
+            `;
+            
+            if (!["heading", "paragraph", "pagebreak"].includes(type)) {
+                html += `
+                    <div class="form-check mb-3">
+                        <input type="checkbox" id="prop-required" class="form-check-input" ${fieldElement.dataset.required === 'true' ? 'checked' : ''} onchange="updateFieldRequired()">
+                        <label class="form-check-label" for="prop-required">Required</label>
+                    </div>
+                `;
+                
+                if (["text", "textarea", "email", "number"].includes(type)) {
+                    html += `
+                        <div class="mb-3">
+                            <label class="form-label">Placeholder</label>
+                            <input type="text" id="prop-placeholder" class="form-control" value="${fieldElement.dataset.placeholder || ''}" onchange="updateFieldPlaceholder()">
+                        </div>
+                    `;
+                }
+                
+                html += `
+                    <div class="mb-3">
+                        <label class="form-label">Help Text</label>
+                        <textarea id="prop-helptext" class="form-control" rows="2" onchange="updateFieldHelpText()">${fieldElement.dataset.helptext || ''}</textarea>
+                    </div>
+                `;
+                
+                if (["select", "radio", "checkbox"].includes(type)) {
+                    const options = fieldElement.dataset.options ? JSON.parse(fieldElement.dataset.options) : ["Option 1", "Option 2", "Option 3"];
+                    html += `
+                        <div class="mb-3">
+                            <label class="form-label">Options (one per line)</label>
+                            <textarea id="prop-options" class="form-control" rows="3" onchange="updateFieldOptions()">${options.join('\n')}</textarea>
+                        </div>
+                    `;
+                }
+            }
+            
+            document.getElementById("field-properties").innerHTML = html;
+        }
+
+        // Update field properties
+        function updateFieldLabel() {
+            if (!selectedField) return;
+            const label = document.getElementById("prop-label").value;
+            const labelElement = selectedField.querySelector("label, legend, h3, p");
+            if (labelElement) {
+                labelElement.textContent = label;
+            }
+            updateFormData();
+        }
+
+        function updateFieldRequired() {
+            if (!selectedField) return;
+            const required = document.getElementById("prop-required").checked;
+            selectedField.dataset.required = required;
+            updateFormData();
+        }
+
+        function updateFieldPlaceholder() {
+            if (!selectedField) return;
+            const placeholder = document.getElementById("prop-placeholder").value;
+            const inputElement = selectedField.querySelector("input, textarea");
+            if (inputElement) {
+                inputElement.placeholder = placeholder;
+            }
+            selectedField.dataset.placeholder = placeholder;
+            updateFormData();
+        }
+
+        function updateFieldHelpText() {
+            if (!selectedField) return;
+            const helptext = document.getElementById("prop-helptext").value;
+            selectedField.dataset.helptext = helptext;
+            updateFormData();
+        }
+
+        function updateFieldOptions() {
+            if (!selectedField) return;
+            const options = document.getElementById("prop-options").value.split("\n").filter(o => o.trim());
+            selectedField.dataset.options = JSON.stringify(options);
+            
+            const selectElement = selectedField.querySelector("select");
+            if (selectElement) {
+                selectElement.innerHTML = options.map(opt => `<option>${opt}</option>`).join("");
+            }
+            
+            updateFormData();
+        }
+
+        // Remove field
+        function removeField(fieldElement) {
+            if (confirm("Are you sure you want to remove this field?")) {
+                fieldElement.remove();
+                selectedField = null;
+                document.getElementById("field-properties").innerHTML = `<p class="text-muted">Select a field to edit its properties</p>`;
+                
+                if (document.querySelectorAll(".form-field").length === 0) {
+                    document.getElementById("form-fields").innerHTML = `<div class="drop-zone text-center p-5 border border-dashed text-muted">Click field types on the left to add them here</div>`;
+                }
+                
+                updateFormData();
+            }
+        }
+
+        // Clear form
+        function clearForm() {
+            document.getElementById("form-fields").innerHTML = `<div class="drop-zone text-center p-5 border border-dashed text-muted">Click field types on the left to add them here</div>`;
+            document.getElementById("field-properties").innerHTML = `<p class="text-muted">Select a field to edit its properties</p>`;
+            selectedField = null;
+            updateFormData();
+        }
+
+        // Preview form
+        function previewForm() {
+            const formData = JSON.parse(document.getElementById("formdata").value || '{"fields":[]}');
+            const formName = document.getElementById("form-name").value || "Untitled Form";
+            
+            let html = `<h4>${formName}</h4>`;
+            
+            if (formData.fields.length === 0) {
+                html += `<p class="text-muted">No fields added to this form yet.</p>`;
+            } else {
+                html += `<form>`;
+                formData.fields.forEach(field => {
+                    html += renderPreviewField(field);
+                });
+                html += `<button type="button" class="btn btn-primary mt-3">Submit Form</button></form>`;
+            }
+            
+            document.getElementById("preview-content").innerHTML = html;
+            new bootstrap.Modal(document.getElementById('previewModal')).show();
+        }
+
+        // Render preview field
+        function renderPreviewField(field) {
+            const required = field.required ? ' <span class="text-danger">*</span>' : '';
+            const placeholder = field.placeholder ? `placeholder="${field.placeholder}"` : '';
+            
+            switch(field.type) {
+                case "text":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><input type="text" class="form-control" ${placeholder}></div>`;
+                case "textarea":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><textarea class="form-control" rows="3" ${placeholder}></textarea></div>`;
+                case "email":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><input type="email" class="form-control" ${placeholder}></div>`;
+                case "number":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><input type="number" class="form-control" ${placeholder}></div>`;
+                case "date":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><input type="date" class="form-control"></div>`;
+                case "select":
+                    const selectOptions = (field.options || ["Option 1", "Option 2"]).map(opt => `<option>${opt}</option>`).join('');
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><select class="form-control"><option value="">Please select...</option>${selectOptions}</select></div>`;
+                case "checkbox":
+                    return `<div class="mb-3"><div class="form-check"><input type="checkbox" class="form-check-input"><label class="form-check-label">${field.label}${required}</label></div></div>`;
+                case "radio":
+                    const radioOptions = (field.options || ["Option 1", "Option 2"]).map((opt, i) => 
+                        `<div class="form-check"><input type="radio" name="${field.id}" class="form-check-input"><label class="form-check-label">${opt}</label></div>`
+                    ).join('');
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label>${radioOptions}</div>`;
+                case "file":
+                    return `<div class="mb-3"><label class="form-label">${field.label}${required}</label><input type="file" class="form-control"></div>`;
+                case "heading":
+                    return `<h3>${field.label}</h3>`;
+                case "paragraph":
+                    return `<p>${field.label}</p>`;
+                case "pagebreak":
+                    return `<hr><div class="text-center text-muted small">Page Break</div><hr>`;
+                default:
+                    return `<div class="mb-3"><label class="form-label">${field.label}</label><input type="text" class="form-control"></div>`;
+            }
+        }
+
+        // Update form data
+        function updateFormData() {
+            const formData = { fields: [] };
+            
+            document.querySelectorAll(".form-field").forEach(field => {
+                const fieldData = {
+                    id: field.dataset.id,
+                    type: field.dataset.type,
+                    label: field.querySelector("label, legend, h3, p")?.textContent || "Field",
+                    required: field.dataset.required === "true",
+                    placeholder: field.dataset.placeholder || "",
+                    helptext: field.dataset.helptext || ""
+                };
+                
+                if (field.dataset.options) {
+                    try {
+                        fieldData.options = JSON.parse(field.dataset.options);
+                    } catch (e) {
+                        fieldData.options = [];
+                    }
+                }
+                
+                formData.fields.push(fieldData);
+            });
+            
+            document.getElementById("formdata").value = JSON.stringify(formData);
+            console.log("Form data updated:", formData);
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", function() {
+            updateFormData();
+            console.log("Form builder demo initialized");
+        });
+
+        // Form submission
+        document.getElementById("formbuilder-form").addEventListener("submit", function(e) {
+            const formName = document.getElementById("form-name").value;
+            if (!formName.trim()) {
+                alert("Please enter a form name");
+                e.preventDefault();
+                return false;
+            }
+            
+            updateFormData();
+            console.log("Submitting form...");
+        });
+    </script>
+</body>
+</html>
